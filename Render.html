@@ -40,27 +40,43 @@
     // render(vnode, document.body);
 
     function mountComponent(vnode, contaniner) {
-      const subtree = vnode.tag();
+      const subtree = vnode.tag.render();
+      // const subtree = vnode.tag();
       render(subtree, contaniner);
     }
 
     function render(vnode, contaniner) {
       if (typeof vnode.tag === "string") {
         mountElement(vnode, contaniner);
-      } else if (typeof vnode.tag === "function") {
+      } else if (
+        typeof vnode.tag === "function" ||
+        typeof vnode.tag === "object"
+      ) {
         mountComponent(vnode, contaniner);
       }
     }
 
     // Component 组件的本质就是一组DOM元素的封装
-    const MyComponent = function () {
-      return {
-        tag: "div",
-        props: {
-          onclick: () => alert("MyComponent"),
-        },
-        children: "MyComponent",
-      };
+    // const MyComponent = function () {
+    //   return {
+    //     tag: "div",
+    //     props: {
+    //       onclick: () => alert("MyComponent"),
+    //     },
+    //     children: "MyComponent",
+    //   };
+    // };
+
+    const MyComponent = {
+      render() {
+        return {
+          tag: "div",
+          props: {
+            onclick: () => alert("MyComponent"),
+          },
+          children: "MyComponent",
+        };
+      },
     };
 
     const vnodes = {
