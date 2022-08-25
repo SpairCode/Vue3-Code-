@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script type="text/javascript">
+    const vnode = {
+      tag: "div",
+      props: {
+        onclick: () => alert("Hello World"),
+      },
+      children: "click again",
+    };
+
+    function mountElement(vnode, contaniner) {
+      // 创建元素
+      const el = document.createElement(vnode.tag);
+      for (const key in vnode.props) {
+        // 如果有以on开头的点击事件
+        if (/^on/.test(key)) {
+          el.addEventListener(key.substr(2).toLowerCase(), vnode.props[key]);
+        }
+      }
+
+      // 判断是否为纯文本节点
+      if (typeof vnode.children === "string") {
+        el.appendChild(document.createTextNode(vnode.children));
+      } else if (Array.isArray(vnode.children)) {
+        // 判断是否为数组
+        vnode.children.forEach((child) => render(child, el));
+      }
+      // 将元素添加到挂载点上
+      contaniner.appendChild(el);
+    }
+
+    // render(vnode, document.body);
+
+    function mountComponent(vnode, contaniner) {
+      const subtree = vnode.tag();
+      render(subtree, contaniner);
+    }
+
+    function render(vnode, contaniner) {
+      if (typeof vnode.tag === "string") {
+        mountElement(vnode, contaniner);
+      } else if (typeof vnode.tag === "function") {
+        mountComponent(vnode, contaniner);
+      }
+    }
+
+    // Component 组件的本质就是一组DOM元素的封装
+    const MyComponent = function () {
+      return {
+        tag: "div",
+        props: {
+          onclick: () => alert("MyComponent"),
+        },
+        children: "MyComponent",
+      };
+    };
+
+    const vnodes = {
+      tag: MyComponent,
+    };
+
+    render(vnodes, document.body);
+  </script>
+</html>
