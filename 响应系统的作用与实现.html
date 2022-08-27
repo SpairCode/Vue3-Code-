@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>响应系统的作用与实现</title>
+  </head>
+  <body></body>
+  <script type="text/javascript">
+    // let Val = 1;
+    // function effect() {
+    //   Val = 2;
+    //   console.log("Val", Val);
+    // }
+    // effect();
+    // console.log("Val2", Val);
+
+    function effect() {
+      document.body.innerHTML = obj.text;
+    }
+
+    const bucket = new Set();
+
+    const data = {
+      text: "Hello",
+    };
+
+    const obj = new Proxy(data, {
+      get(target, key) {
+        bucket.add(effect);
+        return target[key];
+      },
+      set(target, key, newVal) {
+        target[key] = newVal;
+
+        bucket.forEach((fn) => fn());
+
+        return true;
+      },
+    });
+
+    effect();
+
+    setTimeout(() => {
+      obj.text = "Hello World";
+    }, 2000);
+  </script>
+</html>
