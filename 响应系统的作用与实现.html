@@ -16,9 +16,20 @@
     // effect();
     // console.log("Val2", Val);
 
-    function effect() {
-      document.body.innerHTML = obj.text;
+    let activeEffect;
+
+    function effect(fn) {
+      activeEffect = fn;
+      fn();
     }
+
+    // effect(() => {
+    //   document.body.innerHTML = obj.text;
+    // });
+
+    // function effect() {
+    //   document.body.innerHTML = obj.text;
+    // }
 
     const bucket = new Set();
 
@@ -28,7 +39,10 @@
 
     const obj = new Proxy(data, {
       get(target, key) {
-        bucket.add(effect);
+        // bucket.add(effect);
+        if (activeEffect) {
+          bucket.add(activeEffect);
+        }
         return target[key];
       },
       set(target, key, newVal) {
@@ -40,7 +54,10 @@
       },
     });
 
-    effect();
+    // effect();
+    effect(() => {
+      document.body.innerHTML = obj.text;
+    });
 
     setTimeout(() => {
       obj.text = "Hello World";
